@@ -1,0 +1,11 @@
+{
+  "message": "Expected \"\\\\\" but \"/\" found.",
+  "status": 400,
+  "errors": [
+    {
+      "title": "Expected \"\\\\\" but \"/\" found.",
+      "detail": "Expected \"\\\\\" but \"/\" found.",
+      "status": 400
+    }
+  ]
+}
