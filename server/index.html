@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>APKShield - Android Security Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            text-align: center;
+        }
+
+        header {
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: auto;
+            opacity: 0.9;
+        }
+
+        .scanner-box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            margin: 40px auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #00ffcc;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00ccaa;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .features {
+            margin-top: 40px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            margin: 8px 0;
+        }
+
+        .safe { color: #00ffcc; }
+        .danger { color: #ff4d4d; }
+        .warning { color: #ffd11a; }
+
+        a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🛡 APKShield</h1>
+    <p>
+        Protect your Android device from malicious APK files and harmful links.  
+        Built for students and the public to stay safe before installing unknown apps.
+    </p>
+</header>
+
+<div class="scanner-box">
+    <h2>🔍 Scan Suspicious URL</h2>
+
+    <input type="text" id="urlInput" placeholder="Enter suspicious URL here">
+
+    <br>
+
+    <button onclick="scanURL()">Scan Now</button>
+
+    <div id="result"></div>
+</div>
+
+<div class="features">
+    <h2>🚀 Why Use APKShield?</h2>
+    <ul>
+        <li>✔ Check links before clicking</li>
+        <li>✔ Scan APK download URLs</li>
+        <li>✔ Prevent malware attacks</li>
+        <li>✔ Beginner friendly</li>
+        <li>✔ Powered by real security intelligence</li>
+    </ul>
+</div>
+
+<footer>
+    Created by Venkat | Android Security Awareness Project  
+    <br>
+    For educational and authorized security testing purposes only.
+</footer>
+
+<script>
+async function scanURL() {
+    const urlInput = document.getElementById("urlInput").value;
+    const resultBox = document.getElementById("result");
+
+    if (!urlInput) {
+        resultBox.innerHTML = "⚠ Please enter a URL.";
+        return;
+    }
+
+    resultBox.innerHTML = "🔍 Scanning... Please wait...";
+
+    try {
+        const response = await fetch("http://localhost:5000/scan-url", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: urlInput })
+        });
+
+        const data = await response.json();
+
+        if (data.analysisId) {
+            const stats = data.stats;
+
+            resultBox.innerHTML = `
+                <h3>✅ Scan Completed</h3>
+                <p class="safe">🟢 Harmless: ${stats.harmless}</p>
+                <p class="warning">🟡 Suspicious: ${stats.suspicious}</p>
+                <p class="danger">🔴 Malicious: ${stats.malicious}</p>
+                <br>
+                <a href="https://www.virustotal.com/gui/url/${data.analysisId}" target="_blank">
+                    🔗 View Full Report on VirusTotal
+                </a>
+            `;
+        } else {
+            resultBox.innerHTML = "❌ Scan failed. Try again.";
+        }
+
+    } catch (error) {
+        resultBox.innerHTML = "⚠ Server error. Make sure backend is running.";
+    }
+}
+</script>
+
+</body>
+</html>
